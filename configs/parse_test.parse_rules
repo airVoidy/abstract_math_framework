@@ -1,0 +1,22 @@
+{
+    "abstract_math": {
+        "define_elements": [
+            {"name": "layers", "visualizer": null},  # Or some other visualizer if needed
+            {"name": "figures", "visualizer": null}, # Or some other visualizer if needed
+            {"name": "my_enums", "visualizer": "enums"}, #This is what you are missing
+            {"name": "axioms", "visualizer": null}, # Or some other visualizer if needed
+            {"name": "consequences", "visualizer": null} # Or some other visualizer if needed
+        ]
+    },
+    "enums": {
+        "TestEnum": ["A", "B", "C"],
+        "AnotherEnum": ["X", "Y", "Z"]
+    },
+    "axioms": {
+        "Axiom1": "element layers exists;",
+        "Axiom2": "enum TestEnum exists"
+    },
+    "consequences": {
+        "Consequence1": "if element figures exists then enum TestEnum exists"
+    }
+}

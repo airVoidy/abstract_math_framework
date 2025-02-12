@@ -1,0 +1,82 @@
+abstract_math:
+  define_elements:
+    - element:
+        name: Square
+        visualizer: shapes
+    - element:
+        name: Circle
+        visualizer: shapes
+    - element:
+        name: Point1 # Example Point 1
+        visualizer: shapes
+    - element:
+        name: Point2 # Example Point 2
+        visualizer: shapes
+    - element:
+        name: GraphExample # Example Graph
+        visualizer: graph
+    - element:
+        name: mandelbrot
+        visualizer: mandelbrot
+    - element:
+        name: logistic_equation
+        visualizer: logistic_equation
+    - element:
+        name: graph
+        visualizer: graph # Redundant, but doesn't harm
+    - element:
+        name: rectangle1
+        visualizer: shapes
+        properties:
+          - property: area
+            formula: "width * height"
+          - property: perimeter
+            formula: "2 * (width + height)"
+    - element:
+        name: circle1
+        visualizer: shapes
+        properties:
+          - property: area
+            formula: "math.pi * radius * radius"
+          - property: circumference
+            formula: "2 * math.pi * radius"
+    - element:
+        name: Cube1
+        visualizer: shapes_3d
+
+enums:
+  Shapes:
+    rectangle1: ["rectangle", 10, 20, 30, 40]
+    circle1: ["circle", 60, 70, 15]
+    Point1: ["point", 20, 80, "P1"] # Example Point 1 data: type, x, y, name (optional)
+    Point2: ["point", 80, 30]      # Example Point 2 data: type, x, y (name is optional)
+  Shapes_3D:
+    cube1: ["cube", 0, 0, 0, 5]
+  Colors:
+    - Red
+    - Green
+    - Blue
+  GraphData: # New enum category for graph data
+    GraphExample: # Enum for GraphExample element
+      nodes: # Example graph data (simple adjacency list)
+        - [1, 2] # Node 0: connected to nodes 1 and 2
+        - [0, 2] # Node 1: connected to nodes 0 and 2
+        - [0, 1] # Node 2: connected to nodes 0 and 1
+
+axioms:
+  Axiom1: area of rectangle1 is greater than area of circle1;
+  Axiom2: circumference of circle1 is less than 100;
+
+mandelbrot_params:
+  width: 800
+  height: 600
+  x_min: -2
+  x_max: 1
+  y_min: -1.5
+  y_max: 1.5
+  max_iter: 256
+
+logistic_equation_params:
+  x0: 0.5
+  r: 3.8
+  iterations: 100

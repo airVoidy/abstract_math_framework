@@ -1,0 +1,4 @@
+abstract_math:
+  define_elements:
+    - name: test_element
+      visualizer: none

@@ -1,0 +1,35 @@
+enums:
+  Shapes:
+    rectangle1:
+      type: "rectangle"
+      parameters: # Parameters section
+        x: -1
+        y: -1
+        width: 2
+        height: 2
+        edgecolor: "blue"
+        facecolor: "lightblue"
+      runtime_editable: # Runtime editable parameters
+        - x
+        - y
+        - width
+        - height
+
+gui_elements:
+  palettes:
+    - name: "Shape Palette"
+      buttons:
+        - type: "shape_button"
+          label: "Draw Rectangle"
+          primitive_type_name: "rectangle1"
+    - name: "Tools"
+      buttons:
+        - type: "tool_button"
+          label: "Load YAML Config"
+          tool_name: "load_yaml_config"
+        - type: "tool_button"
+          label: "Add Point Layer"
+          tool_name: "add_point_layer"
+        - type: "tool_button"
+          label: "Add Center Point Layer"
+          tool_name: "add_center_point_layer"

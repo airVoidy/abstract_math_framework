@@ -1,0 +1,91 @@
+abstract_math:
+    define_elements:
+        - element:
+            name: Square
+            visualizer: shapes
+        - element:
+            name: Circle
+            visualizer: shapes
+        - element:
+            name: Point1
+            visualizer: shapes
+        - element:
+            name: Point2
+            visualizer: shapes
+        - element:
+            name: mandelbrot
+            visualizer: mandelbrot
+        - element:
+            name: logistic_equation
+            visualizer: logistic_equation
+        - element:
+            name: graph
+            visualizer: graph
+        - element:
+            name: rectangle1
+            visualizer: shapes
+            properties:
+              - property: area
+                formula: "width * height"
+              - property: perimeter
+                formula: "2 * (width + height)"
+        - element:
+            name: circle1
+            visualizer: shapes
+            properties:
+              - property: area
+                formula: "math.pi * radius * radius"
+              - property: circumference
+                formula: "2 * math.pi * radius"
+        - element:
+            name: Cube1
+            visualizer: shapes_3d
+        - element:
+            name: PenroseTriangle1  # Definition for Penrose Triangle
+            visualizer: shapes_2d # Or 'shapes' if you are using 2D visualizer for all shapes
+
+    enums:
+        Shapes:
+            rectangle1: ["rectangle", 10, 20, 30, 40]
+            circle1: ["circle", 60, 70, 15]
+            Point1: ["point", 20, 80, "P1"]
+            Point2: ["point", 80, 30]
+        Shapes_3D:
+            cube1: ["cube", 0, 0, 0, 5]
+            # Shapes_Staircase: # Removed Staircase Enum
+            #   impossible_staircase1: ["impossible_staircase"] # Removed Staircase Enum
+        Colors:
+            - Red
+            - Green
+            - Blue
+
+    axioms:
+        Axiom1: element rectangle1 exists;
+        Axiom2: element circle1 exists;
+    
+    mandelbrot_params:
+        width: 800
+        height: 600
+        x_min: -2
+        x_max: 1
+        y_min: -1.5
+        y_max: 1.5
+        max_iter: 256
+    
+    logistic_equation_params:
+        x0: 0.5
+        r: 3.8
+        iterations: 100
+    
+    # geometry_definitions.yaml
+
+geometry_rules:
+  - shape_enum: impossible_staircase1
+    shape_type: impossible_staircase1
+    shape_data:
+      - impossible_staircase
+
+  - shape_enum: penrose_triangle1 # Geometry rule for Penrose Triangle
+    shape_type: penrose_triangle1 # Shape type for Penrose Triangle
+    shape_data:
+      - penrose_triangle # Shape data for Penrose Triangle

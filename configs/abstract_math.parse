@@ -1,0 +1,53 @@
+
+
+test_code_1 = """
+abstract_math define_elements(){layers; figures; enums}
+
+enums define_enums(){
+    Player = enum{X, O, None}
+    CellState = enum{Empty, X_Mark, O_Mark}
+    GameState = enum{InProgress, X_Wins, O_Wins, Draw}
+}
+"""
+
+test_code_2 = """
+abstract_math define_elements(){layers; figures}
+
+enums define_enums(){
+    Direction = enum{North, South, East, West}
+}
+"""
+
+test_code_3 = """
+abstract_math define_elements(){figures}
+
+enums define_enums(){} # Пустой блок enums
+"""
+
+test_code_4 = """
+abstract_math define_elements(){layers; figures; enums}
+
+# enums define_enums(){} - Блок enums закомментирован или отсутствует
+"""
+
+test_code_5 = """
+abstract_math define_elements(){ layers; figures; enums } # Пробелы вокруг элементов
+"""
+
+test_code_6 = """
+abstract_math define_elements(){layers;figures;enums} # Без пробелов, слитно
+"""
+
+test_code_7 = """
+enums define_enums(){ # Только блок enums, без define_elements
+    Color = enum{Red, Green, Blue}
+}
+"""
+
+test_code_8 = """
+abstract_math define_elements(){layers; figures; enums}
+
+enums define_enums(){
+    MyEnum = enum{Value1, Value 2, Value_3} # Пробелы внутри значений enum
+}
+"""
