@@ -8,11 +8,14 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from enum import Enum  #  Импортируем LayerType из abstract_math_layer
 # Relative import to get LayerType, Layer, create_layer from core module
+import abstract_math_framework
 from abstract_math_framework.core.abstract_math_layer import LayerType, Layer, create_layer
+import abstract_math_framework.visualizers.visualizers as vis
 import functools  # <--- functools импортирован здесь, если нет в update_layer_listbox
+import yaml
 
 # Relative import to get Visualizer and CartesianVisualizer from visualizers directory
-from ..visualizers.visualizers import Visualizer, CartesianVisualizer
+from abstract_math_framework.visualizers.visualizers import Visualizer, CartesianVisualizer
 
 # Relative import to get load_yaml_config, loaded_yaml_configs, create_visualizer, load_default_yaml_config_from_directory from yaml_config_module
 from ..modules.yaml_config_module.config_manager import load_yaml_config, loaded_yaml_configs, create_visualizer, load_default_yaml_config_from_directory
@@ -26,7 +29,8 @@ interactive_layers = [] # Список для хранения слоев
 canvas_items_ids = {} # Словарь для хранения canvas object IDs для слоев
 selected_layers_for_deletion = [] # Список выбранных слоев для удаления (возможно, пока не используется)
 root = None # Добавляем global root
-playground_canvas = None
+playground_fig = Figure(figsize=(5, 5), dpi=100)
+
 playground_ax = None
 palette_frame_container = None
 tools_frame_container = None
@@ -142,33 +146,34 @@ def add_interactive_layer(layer_type): #  Принимаем LayerType
     interactive_layers.append(new_layer)
     update_layer_listbox() # Обновляем список слоев в GUI
     redraw_playground_canvas()
+    playground_ax.clear()
     print(f"Слой создан с помощью кнопки: {new_layer}, список слоев: {interactive_layers}")
-
+    playground_canvas.draw()
 
 def draw_shape_on_playground(primitive_type_name):
-    global playground_ax
-    print(f"DEBUG: Entering draw_shape_on_playground with primitive_type_name: {primitive_type_name}") # <--- DEBUG PRINT at function start
-    print(f"DEBUG: Current playground_shapes dictionary: {playground_shapes}") # <--- DEBUG PRINT to inspect dictionary content
+    global visualizer_manager, playground_shapes # Add visualizer_manager to globals
+
+    print(f"DEBUG: Entering draw_shape_on_playground with primitive_type_name: {primitive_type_name}")
+    print(f"DEBUG: Current playground_shapes dictionary: {playground_shapes}")
+
     if primitive_type_name in playground_shapes:
         shape_data = playground_shapes[primitive_type_name]
-        shape_type = shape_data[0]
-        coords = shape_data[1:]
-        if shape_type == 'rectangle':
-            x, y, width, height = coords
-            rect = playground_ax.add_patch(plt.Rectangle((x, y), width, height, edgecolor='blue', facecolor='lightblue'))
-            playground_canvas.draw()
-            playground_shapes[primitive_type_name].append(rect) #  Сохраняем объект Rectangle
-            print(f"DEBUG: Нарисован прямоугольник '{primitive_type_name}' с координатами {coords}")
+        shape_type = shape_data['type'] # Get 'type' from dictionary  <--- UPDATED
+        shape_params = shape_data['parameters'] # Get 'parameters' dictionary <--- UPDATED
+
+        active_visualizer = visualizer_manager.get_active_visualizer() # Get active visualizer from manager
+        if active_visualizer:
+            active_visualizer.draw_shape(shape_type, shape_params) # Delegate drawing to visualizer
         else:
-            print(f"Unknown shape type: {shape_type}")
+            print("DEBUG: No active visualizer to draw shape on.") # Debug if no visualizer
+
     else:
         print(f"Primitive type name not found in playground_shapes: {primitive_type_name}")
 
 
 def redraw_playground_canvas():
-    global playground_ax
+    global playground_ax, playground_canvas
     print("redraw_playground_canvas вызван")
-    playground_ax.clear()
     # --- Рисуем shapes ---
     for shape_name, shape_config in playground_shapes.items():
         shape_type = shape_config[0]
@@ -185,9 +190,10 @@ def redraw_playground_canvas():
             if hasattr(layer, 'draw') and callable(layer.draw): # <--- Проверка наличия метода draw и что это функция
                 layer.draw(playground_ax)
             # --- КОНЕЦ ВРЕМЕННОЙ МЕРЫ ---
-
-    playground_canvas.draw()
+            
     print("redraw_playground_canvas завершил рисование")
+
+
 
 
 def update_layer_listbox():
@@ -263,6 +269,8 @@ def toggle_layer_visibility(layer, visibility_var):
     print(f"Видимость слоя '{layer.name}' изменена на: {visibility_var.get()}")
     layer.visible = visibility_var.get() # Обновляем свойство visible слоя
     redraw_playground_canvas() #  Перерисовываем canvas после изменения видимости
+    playground_ax.clear()
+    playground_canvas.draw()
 
 def toggle_select_command(layer, select_var):
     layer_selected = select_var.get()
@@ -293,13 +301,17 @@ def remove_selected_layers():
     interactive_layers = [layer for layer in interactive_layers if layer not in layers_to_remove]
     update_layer_listbox()
     redraw_playground_canvas()
-
+    playground_ax.clear()
     print(f"Слои после удаления: {interactive_layers}")
+    playground_canvas.draw()
 
 
 
 def start_gui():
-    global root, playground_canvas, playground_ax, palette_frame_container, tools_frame_container, layer_list_frame, remove_button # Добавляем globals
+    global root, palette_frame_container, tools_frame_container, layer_list_frame, remove_button, primitives_listbox, visualizer_manager, center_frame # Add visualizer_manager and center_frame to globals
+    visualizer_manager = vis.VisualizerManager() # Instantiate VisualizerManager  <--- CREATE visualizer_manager INSTANCE
+    default_visualizer = create_visualizer('cartesian', 'default_cartesian_view', {'xlim': [-10, 10], 'ylim': [-10, 10]}) # Use factory
+
     root = tk.Tk()
     root.title("Интерактивная Песочница")
 
@@ -325,7 +337,7 @@ def start_gui():
 
 
     # --- Холст Matplotlib ---
-    playground_fig = Figure(figsize=(5, 5), dpi=100)
+
     playground_ax = playground_fig.add_subplot(111)
     playground_ax.set_xlim([-10, 10])
     playground_ax.set_ylim([-10, 10])
@@ -373,6 +385,7 @@ def start_gui():
     print("Связывание событий установлено")
 
     redraw_playground_canvas() #  Первоначальная отрисовка canvas (с Rectangle1)
+    playground_ax.clear()
     print("Начальный redraw_playground_canvas вызов ПОСЛЕ mainloop()")
 
 

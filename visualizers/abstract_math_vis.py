@@ -4,7 +4,6 @@ import matplotlib.patches as patches
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 import math
 import networkx as nx
-
 def visualize_shape(rule, ax, parsed_data):
     shape_type = rule['shape_type']
     shape_visualizer = rule.get('shape_visualizer', 'shapes_2d')

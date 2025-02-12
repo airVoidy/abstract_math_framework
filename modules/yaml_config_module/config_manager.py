@@ -1,3 +1,5 @@
+import abstract_math_framework.core.abstract_math_core
+import abstract_math_framework.visualizers.visualizers as vis
 import yaml
 from tkinter import filedialog
 import os
@@ -61,7 +63,7 @@ def process_yaml_config(yaml_configs):  # Accepts a list of yaml_configs
                     vis_type = vis_def.get('type')
                     vis_params = vis_def.get('parameters', {})
                     if vis_type:  # Only create visualizer if type is defined
-                        visualizer = create_visualizer(vis_type, vis_name, vis_params)  # Use create_visualizer - assuming it's defined elsewhere or will be
+                        visualizer = vis.create_visualizer(vis_type, vis_name, vis_params)  # Use create_visualizer - assuming it's defined elsewhere or will be
                         if visualizer:
                             playground_visualizers[vis_name] = visualizer
                             print(f"DEBUG: Loaded visualizer '{vis_name}' of type '{vis_type}'")
@@ -83,8 +85,7 @@ def process_yaml_config(yaml_configs):  # Accepts a list of yaml_configs
 
 def create_visualizer(vis_type, vis_name, vis_params):  # Basic visualizer factory - to be expanded
     if vis_type == 'cartesian':
-        from visualizers import CartesianVisualizer  # Import here to avoid circular imports
-        return CartesianVisualizer(name=vis_name, parameters=vis_params)
+        return vis.CartesianVisualizer(parameters=vis_params)
     elif vis_type == 'yaml_viewer':  # Example type for YAMLVisualizer - adjust if needed
         from modules.yaml_config_module.yaml_visualizer import YAMLVisualizer  # Import YAMLVisualizer from module
         return YAMLVisualizer(name=vis_name, parameters=vis_params)  # You might need to adjust parameters for YAMLVisualizer
